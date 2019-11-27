@@ -1,3 +1,7 @@
 all:
-	gcc hw5_client.c -o hw5_client
-	gcc hw5_server.c -o hw5_server
+	gcc server.c -o server
+	gcc client.c -o client
+clean:
+	rm -f server client
+
+	
