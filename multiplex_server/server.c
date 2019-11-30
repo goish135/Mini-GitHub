@@ -10,15 +10,19 @@
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#define KGRN "\x1B[0;32m"   
+#define KYEL "\x1B[0;33m"    // Yellow
+#define WHITE_L "\x1B[1;37m"
 // #include <vector>
 #include <stdbool.h>
-
+#define KRED "\x1B[0;31m"    // Red > Alive
 #define TRUE                    1
 #define FALSE                   0
 
 #define MAX_PENDING_CONNECTIONS 4
 #define MAX_CONNECTIONS         32
 #define BUFFER_SIZE             1024
+
 
 
 static inline int max(int a, int b) {
@@ -33,7 +37,7 @@ bool check_per(char* str)
 {
 	// step1 : is six ?
 	int len = strlen(str);
-	printf("len: %d\n",len);
+	//printf("len: %d\n",len);
 
 	if(len==6)
 	{
@@ -223,7 +227,7 @@ int acceptConnections(int tcpSocketFileDescriptor, int udpSocketFileDescriptor) 
                 fprintf(stderr, "[WARN][TCP] Failed to accpet a socket from client: %s\n", strerror(errno));
                 continue;
             }
-            fprintf(stderr, "[INFO][TCP] Connection established with %s:%d\n", 
+            fprintf(stderr, KGRN"[INFO][TCP] Connection established with %s:%d\n", 
                 inet_ntoa(clientSocketAddress.sin_addr), ntohs(clientSocketAddress.sin_port));
 
             // Register file descriptors for sockets
@@ -247,7 +251,7 @@ int acceptConnections(int tcpSocketFileDescriptor, int udpSocketFileDescriptor) 
                     inet_ntoa(clientSocketAddress.sin_addr), ntohs(clientSocketAddress.sin_port), strerror(errno));
                 continue;
             }
-            fprintf(stderr, "[INFO][UDP] Received a message from client %s:%d: %s\n", 
+            fprintf(stderr,WHITE_L "[INFO][UDP] Received a message from client %s:%d: %s\n", 
                 inet_ntoa(clientSocketAddress.sin_addr), ntohs(clientSocketAddress.sin_port), inputBuffer);
 
             // Send a message to client
@@ -272,7 +276,7 @@ int acceptConnections(int tcpSocketFileDescriptor, int udpSocketFileDescriptor) 
                         inet_ntoa(clientSocketAddress.sin_addr), ntohs(clientSocketAddress.sin_port), strerror(errno));
                     continue;
                 }
-                fprintf(stderr, "[INFO][TCP] Received a message from client %s:%d: %s\n", 
+                fprintf(stderr, WHITE_L "[INFO][TCP] Received a message from client %s:%d: %s\n", 
                     inet_ntoa(clientSocketAddress.sin_addr), ntohs(clientSocketAddress.sin_port), inputBuffer);
 
                 // Handler for TCP messages
@@ -280,7 +284,7 @@ int acceptConnections(int tcpSocketFileDescriptor, int udpSocketFileDescriptor) 
                     // Complete receiving message from client
                     close(clientSocketFD);
                     clientSocketFileDescriptors[i] = 0;
-                    fprintf(stderr, "[INFO][TCP] Client %s:%d disconnected.\n", 
+                    fprintf(stderr,KRED  "[INFO][TCP] Client %s:%d disconnected.\n", 
                         inet_ntoa(clientSocketAddress.sin_addr), ntohs(clientSocketAddress.sin_port));
 
                     continue;
@@ -313,7 +317,7 @@ int acceptConnections(int tcpSocketFileDescriptor, int udpSocketFileDescriptor) 
 		    /* check inputBuffer type -> str */
 		    char *delim = " ";
 		    char *pch;
-		    printf("Splitting string \"%s\" into token:\n",inputBuffer);
+		    //printf("Splitting string \"%s\" into token:\n",inputBuffer);
 
 		    int cnt = 0; // counter for token number // 
 
@@ -335,7 +339,7 @@ int acceptConnections(int tcpSocketFileDescriptor, int udpSocketFileDescriptor) 
 
 		    while(pch!=NULL)
 		    {
-			    printf("%s\n",pch);
+			  //  printf("%s\n",pch);
 			   // argvector.push(pch);
                             if(cnt==0)
 			    {
@@ -351,7 +355,7 @@ int acceptConnections(int tcpSocketFileDescriptor, int udpSocketFileDescriptor) 
 			    }   
 			    pch = strtok(NULL,delim);
 			    cnt++;
-			    printf("cnt:%d\n",cnt);
+			   // printf("cnt:%d\n",cnt);
 		    }
 		    if(cnt==3)
 		    {
@@ -360,39 +364,44 @@ int acceptConnections(int tcpSocketFileDescriptor, int udpSocketFileDescriptor) 
 			    //printf("arg2:%s\n",argvector[1]);
 			    //printf("arg3:%s\n",argvector[2]);
 
-			    printf("arg1:%s\n",arg1);
+			    //printf("arg1:%s\n",arg1);
 			    if(strcmp(arg1,"Create")==0)
 			    {
-				    printf("owner create file and upload file to server side\n");
+				    printf(KYEL "owner create file and upload file to server side\n");
 				    // Check permission format // 
 				    if(check_per(arg3)==true)
 				    {
-					    printf("Ok.\n");
+					    printf(KGRN "Ok.\n");
 				    }
 				    else
 				    {
-					    printf("Not Ok.\n");
+					    printf(KRED "Not Ok.\n");
 				    }
 
 			    }
-			    else if(strcmp(arg1,"Read")==0)
-			    {
-				    printf("Check whether client has read permission.\n");
+			   // else if(strcmp(arg1,"Read")==0)
+			  //  {
+			//	    printf("Check whether client has read permission.\n");
 	
-			    }
+			   // }
 			    else if(strcmp(arg1,"Write")==0)
 			    {
-				    printf("Check whether client has write permission.\n");
-				    // Check permission format //
-                                    if(check_per(arg3)==true)
-                                    {
-                                            printf("Ok.\n");
-                                    }
-                                    else
-                                    {
-                                            printf("Not Ok.\n");
-                                    }
+				    printf(KYEL "Check whether client has write permission.\n");
 				   
+
+				   if(strcmp(arg3,"o")==0||strcmp(arg3,"a")==0)
+				   {
+					  // printf("Write/Upload\n");
+					// fprintf(stderr,"Write/Upload",inet_ntoa(clientSocketAddress.sin_addr), ntohs(clientSocketAddress.sin_port), inputBuffer);
+					fprintf(stderr,KGRN  "Write/Upload\n");
+				   }
+				   else
+				   {
+					  // printf("arg. error\n");
+					 // fprintf(stderr,"o/a",inet_ntoa(clientSocketAddress.sin_addr), ntohs(clientSocketAddress.sin_port), inputBuffer);
+					 fprintf(stderr,KRED "o/a\n");
+
+				   }
 
 			    }
 			    else if(strcmp(arg1,"Changemode")==0)
@@ -401,33 +410,43 @@ int acceptConnections(int tcpSocketFileDescriptor, int udpSocketFileDescriptor) 
 				    // Check permission format //
                                     if(check_per(arg3)==true)
                                     {
-                                            printf("Ok.\n");
+                                            printf(KGRN "Ok.\n");
                                     }
                                     else
                                     {
-                                            printf("Not Ok.\n");
+                                            printf(KRED "Not Ok.\n");
                                     }
 
 
 			    }
 			    else
 			    {
-				    printf("Error Command\n");
-				    printf("[Usage]\n1)Create\n2)Read3)Write\n4)Changemode\n"); 
+				    printf(KRED "Error Command\n");
+				    printf(KYEL "[Usage]\n1)Create\n2)Read\n3)Write\n4)Changemode\n"); 
 			    }
 
-			    printf("arg2:%s\n",arg2);
-			    printf("arg3:%s\n",arg3);
+			    //printf("arg2:%s\n",arg2);
+			    //printf("arg3:%s\n",arg3);
 
+		    }
+		    else if(cnt==2) // Read
+		    {
+			    
+			//printf("xxxxxxxxxxxxxxxxxxxxxxxxxxx\n");    
+			if(strcmp(arg1,"Read")==0)
+			{
+				// printf("Check whether client has read permission.\n");
+				fprintf(stderr,KYEL "Check whether client has read permission.\n");
+			}
 		    }
 		    else
 		    {
-			    printf("Error argc.\n");
+			    printf(KRED "Error argc.\n");
 		    }
                     if ( send(clientSocketFD, inputBuffer, strlen(inputBuffer), 0) == -1 ) {
                         clientSocketFileDescriptors[i] = 0;
 
-                        fprintf(stderr, "[ERROR] An error occurred while sending message to the client %s:%d: %s\nThe connection is going to close.\n", 
+                        fprintf(stderr,KRED "[ERROR] An error occurred while sending message to the client %s:%d: %s\nThe connection is going to close.\n", 
                             inet_ntoa(clientSocketAddress.sin_addr), ntohs(clientSocketAddress.sin_port), strerror(errno));
                     }
                 }
