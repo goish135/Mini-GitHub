@@ -10,82 +10,57 @@
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <sys/types.h>
-#define KGRN "\x1B[0;32m"   
-#define KYEL "\x1B[0;33m"    // Yellow
-#define WHITE_L "\x1B[1;37m"
-// #include <vector>
 #include <stdbool.h>
-#define KRED "\x1B[0;31m"    // Red > Alive
+#define KGRN "\x1B[0;32m"    //Green
+#define KYEL "\x1B[0;33m"    // Yellow
+#define WHITE_L "\x1B[1;37m" // White
+#define KRED "\x1B[0;31m"    // Red
 #define TRUE                    1
 #define FALSE                   0
-
 #define MAX_PENDING_CONNECTIONS 4
 #define MAX_CONNECTIONS         32
 #define BUFFER_SIZE             1024
 
-
-
-static inline int max(int a, int b) {
+static inline int max(int a, int b) 
+{
     return (a > b) ? a : b;
 }
-
 
 int acceptConnections(int tcpSocketFileDescriptor, int udpSocketFileDescriptor);
 int registerNewSocket(int clientSocketFD, int* clientSocketFileDescriptors, int n);
 
 bool check_per(char* str)
 {
-	// step1 : is six ?
 	int len = strlen(str);
-	//printf("len: %d\n",len);
-
 	if(len==6)
 	{
-		// step2 : inclde (r,w,x,-) :: 正規檢查 
-                // 0 1 2 // 3 4 5
 		bool flag = true;
-
 		for(int i=0;i<6;i++)
 		{
 		   if(i%3==0) // read
 		   {
-			   //if(!(strcmp(str[i],"r")==0||strcmp(str[i],"-")==0))
 			   if(!(str[i]=='r'||str[i]=='-'))
 			   {
-				printf("format error: r/-\n");
-				printf("test r\n");
-				flag = false;
+                    flag = false;
 			   }
-
 		   }
 		   else if(i%3==1) // write 
 		   {
-                           //if(!(strcmp(str[i],"w")==0||strcmp(str[i],"-")==0))
 			   if(!(str[i]=='w'||str[i]=='-'))
 			   {
-				printf("format error: w/-\n");
-				printf("test w\n");
-				flag = false;
+                    flag = false;
 			   }
 		   }
 		   else if(i%3==2) // execute
 		   {
-                           //if(!(strcmp(str[i],"x")==0||strcmp(str[i],"-")==0))
 			   if(!(str[i]=='x'||str[i]=='-'))
-                           {
-                                printf("format error: x/-\n");
-				printf("test x\n");
-                                flag = false;
-                           }
+               {
+                    flag = false;
+               }
 		   }
 		}
 		if(flag==true) return true;
 		else return false;
-
-
-
-
-
 	}
 	else
 	{
@@ -310,144 +285,108 @@ int acceptConnections(int tcpSocketFileDescriptor, int udpSocketFileDescriptor) 
                     fclose(inputFile);
                     fprintf(stderr, "[INFO][TCP] Send file stream to client %s:%d: %s\n", 
                         inet_ntoa(clientSocketAddress.sin_addr), ntohs(clientSocketAddress.sin_port), inputBuffer);
-                } else {
+                } else 
+                {
                     // Send a message to client
                     // send back what unique message (cookie) which client send to server
 
-		    /* check inputBuffer type -> str */
-		    char *delim = " ";
-		    char *pch;
-		    //printf("Splitting string \"%s\" into token:\n",inputBuffer);
-
-		    int cnt = 0; // counter for token number // 
-
-		    pch = strtok(inputBuffer,delim);
-
-		    //cnt++;
-		    //printf("pch:%s\n",pch);
-		    // vector<int> argvector;
-		    /*
-                    struct node{
-			    char str[11];
-			    struct node *next;
-		    };
-		    typedef struct node Node;
-		    Node a,b,c;
-		    Node *ptr = &a;
-                    */
-		    char arg1[80],arg2[80],arg3[80];
-
-		    while(pch!=NULL)
-		    {
-			  //  printf("%s\n",pch);
-			   // argvector.push(pch);
-                            if(cnt==0)
-			    {
-				    strcpy(arg1,pch);
-			    }
-			    else if(cnt==1)
-			    {
-				    strcpy(arg2,pch);
-			    }
-			    else if(cnt==2)
-			    {
-				    strcpy(arg3,pch);
-			    }   
-			    pch = strtok(NULL,delim);
-			    cnt++;
-			   // printf("cnt:%d\n",cnt);
-		    }
-		    if(cnt==3)
-		    {
-			    printf("Right argc.\n");
-			    //printf("arg1:%s\n",argvector[0]);
-			    //printf("arg2:%s\n",argvector[1]);
-			    //printf("arg3:%s\n",argvector[2]);
-
-			    //printf("arg1:%s\n",arg1);
-			    if(strcmp(arg1,"Create")==0)
-			    {
-				    printf(KYEL "owner create file and upload file to server side\n");
-				    // Check permission format // 
-				    if(check_per(arg3)==true)
-				    {
-					    printf(KGRN "Ok.\n");
-				    }
-				    else
-				    {
-					    printf(KRED "Not Ok.\n");
-				    }
-
-			    }
-			   // else if(strcmp(arg1,"Read")==0)
-			  //  {
-			//	    printf("Check whether client has read permission.\n");
-	
-			   // }
-			    else if(strcmp(arg1,"Write")==0)
-			    {
-				    printf(KYEL "Check whether client has write permission.\n");
-				   
-
-				   if(strcmp(arg3,"o")==0||strcmp(arg3,"a")==0)
-				   {
-					  // printf("Write/Upload\n");
-					// fprintf(stderr,"Write/Upload",inet_ntoa(clientSocketAddress.sin_addr), ntohs(clientSocketAddress.sin_port), inputBuffer);
-					fprintf(stderr,KGRN  "Write/Upload\n");
-				   }
-				   else
-				   {
-					  // printf("arg. error\n");
-					 // fprintf(stderr,"o/a",inet_ntoa(clientSocketAddress.sin_addr), ntohs(clientSocketAddress.sin_port), inputBuffer);
-					 fprintf(stderr,KRED "o/a\n");
-
-				   }
-
-			    }
-			    else if(strcmp(arg1,"Changemode")==0)
-			    {
-				    printf("Check whether client is an owerner.\n");
-				    // Check permission format //
-                                    if(check_per(arg3)==true)
-                                    {
-                                            printf(KGRN "Ok.\n");
-                                    }
-                                    else
-                                    {
-                                            printf(KRED "Not Ok.\n");
-                                    }
+                    /* check inputBuffer type -> str */
+                    char *delim = " ";
+                    char *pch;
 
 
-			    }
-			    else
-			    {
-				    printf(KRED "Error Command\n");
-				    printf(KYEL "[Usage]\n1)Create\n2)Read\n3)Write\n4)Changemode\n"); 
-			    }
+                    int cnt = 0; // counter for token number // 
 
-			    //printf("arg2:%s\n",arg2);
-			    //printf("arg3:%s\n",arg3);
+                    pch = strtok(inputBuffer,delim);
 
-		    }
-		    else if(cnt==2) // Read
-		    {
-			    
-			//printf("xxxxxxxxxxxxxxxxxxxxxxxxxxx\n");    
-			if(strcmp(arg1,"Read")==0)
-			{
-				// printf("Check whether client has read permission.\n");
-				fprintf(stderr,KYEL "Check whether client has read permission.\n");
-			}
-		    }
-		    else
-		    {
-			    printf(KRED "Error argc.\n");
-		    }
-                    if ( send(clientSocketFD, inputBuffer, strlen(inputBuffer), 0) == -1 ) {
-                        clientSocketFileDescriptors[i] = 0;
 
-                        fprintf(stderr,KRED "[ERROR] An error occurred while sending message to the client %s:%d: %s\nThe connection is going to close.\n", 
-                            inet_ntoa(clientSocketAddress.sin_addr), ntohs(clientSocketAddress.sin_port), strerror(errno));
+                    char arg1[80],arg2[80],arg3[80];
+
+                    while(pch!=NULL)
+                    {
+
+                        if(cnt==0)
+                        {
+                            strcpy(arg1,pch);
+                        }
+                        else if(cnt==1)
+                        {
+                            strcpy(arg2,pch);
+                        }
+                        else if(cnt==2)
+                        {
+                            strcpy(arg3,pch);
+                        }   
+                        pch = strtok(NULL,delim);
+                        cnt++;
+
+                    }
+                    if(cnt==3)
+                    {
+                        printf("Right argc.\n");
+
+                        if(strcmp(arg1,"Create")==0)
+                        {
+                            printf(KYEL "owner create file and upload file to server side\n");
+                            // Check permission format // 
+                            if(check_per(arg3)==true)
+                            {
+                                printf(KGRN "Ok.\n");
+                            }
+                            else
+                            {
+                                printf(KRED "Not Ok.\n");
+                            }
+                        }
+                        else if(strcmp(arg1,"Write")==0)
+                        {
+                           printf(KYEL "Check whether client has write permission.\n");
+                           
+
+                           if(strcmp(arg3,"o")==0||strcmp(arg3,"a")==0)
+                           {
+                                fprintf(stderr,KGRN  "Write/Upload\n");
+                           }
+                           else
+                           {
+                                fprintf(stderr,KRED "o/a\n");
+                           }
+
+                        }
+                        else if(strcmp(arg1,"Changemode")==0)
+                        {
+                            printf(KYEL "Check whether client is an owerner.\n");
+                            
+                            if(check_per(arg3)==true)
+                            {
+                                printf(KGRN "Ok.\n");
+                            }
+                            else
+                            {
+                                printf(KRED "Not Ok.\n");
+                            }
+                        }
+                        else
+                        {
+                            printf(KRED "Error Command\n");
+                            printf(KYEL "[Usage]\n1)Create\n2)Read\n3)Write\n4)Changemode\n"); 
+                        }
+                    }
+                    else if(cnt==2) // Read
+                    {   
+                        if(strcmp(arg1,"Read")==0)
+                        {
+                            fprintf(stderr,KYEL "Check whether client has read permission.\n");
+                        }
+                    }
+                    else
+                    {
+                        printf(KRED "Error argc.\n");
+                    }
+                    if ( send(clientSocketFD, inputBuffer, strlen(inputBuffer), 0) == -1 ) 
+                    {
+                                clientSocketFileDescriptors[i] = 0;
+                                fprintf(stderr,KRED "[ERROR] An error occurred while sending message to the client %s:%d: %s\nThe connection is going to close.\n", inet_ntoa(clientSocketAddress.sin_addr), ntohs(clientSocketAddress.sin_port), strerror(errno));
                     }
                 }
             }
