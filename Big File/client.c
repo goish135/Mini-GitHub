@@ -6,7 +6,7 @@
 #include<string.h>                             // for bzero  
 #include <unistd.h>
 #include <arpa/inet.h>
-#define HELLO_WORLD_SERVER_PORT       6666  
+#define HELLO_WORLD_SERVER_PORT       87  
 #define BUFFER_SIZE                   1024  
 #define FILE_NAME_MAX_SIZE            512  
 int main(int argc, char **argv)  
