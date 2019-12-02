@@ -278,6 +278,7 @@ if(status==1)
 		else if(len<0) {printf("rec err.\n");}
 		else
 		{
+			printf("len:%d\n",len);
 			//char dir[] = "./server_side/";
 			//char tmp[] = "";
 			//strcpy(tmp,file_name);
@@ -287,6 +288,11 @@ if(status==1)
 			printf("file_name %s\n",file_name);
 			FILE *fp;
 			fp = fopen(dir,"w");
+			printf("buffer:$%s$\n",buffer);
+			if(strcmp(buffer,"")==0)
+			{
+				printf("no context...\n");
+			}
 			fprintf(fp,"%s\n",buffer);
 			fclose(fp);
 		}
