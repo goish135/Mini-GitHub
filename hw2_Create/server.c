@@ -279,7 +279,18 @@ int main(int argc, char **argv)
                 time_t T = time(NULL);
                 struct tm tm = *localtime(&T);
                 
-                printf("%s %s %d %d/%d/%d %s\n",per,account,len,tm.tm_mon+1,tm.tm_mday,tm.tm_year+1900,file_name);
+                printf("%s %s %s %d %d/%d/%d %s\n",per,account,pw,len,tm.tm_mon+1,tm.tm_mday,tm.tm_year+1900,file_name);
+		FILE *fp_cp = fopen("cp.txt","a");
+		if(fp_cp==NULL)
+		{
+			printf("Open Failure.");
+		}
+		else
+		{
+			fprintf(fp_cp,"%s %s %s %d %d/%d/%d %s\n",per,account,pw,len,tm.tm_mon+1,tm.tm_mday,tm.tm_year+1900,file_name);
+		}
+		fclose(fp_cp);
+
 
             }	
     } // End if Status == 1 : 登入狀態        	
