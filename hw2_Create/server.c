@@ -18,11 +18,13 @@ typedef struct
 	char owner[BUFFER_SIZE];
 	char group[BUFFER_SIZE];
 	char file_size[BUFFER_SIZE];
-	char month[BUFFER_SIZE];
-	char day[BUFFER_SIZE];
-	char year[BUFFER_SIZE];
+	//char month[BUFFER_SIZE];
+	//char day[BUFFER_SIZE];
+	//char year[BUFFER_SIZE];
+    char date[BUFFER_SIZE];
 	char filename[BUFFER_SIZE];
 }cp[100];
+
 int status = 0; // 紀錄是否登入 
 
 int main(int argc, char **argv)  
@@ -304,133 +306,72 @@ int main(int argc, char **argv)
 
 
             }
-            else if(strcmp(action,"Changemode")==0)
+        else if(strcmp(action,"Changemode")==0)
 	    {
 		    FILE *fp_cg;
-		    fp_cg = fopen("./data/cp.txt","r");
-		    FILE *fp_new = fopen("./data/cp_temp.txt","w");
+		    fp_cg = fopen("./data/cp.txt","r"); // Before
+            
+		    FILE *fp_new = fopen("./data/cp_temp.txt","w"); // After 
 
-		    char buf[BUFFER_SIZE];
+		    
 		    int line = 0;
-		    cp *save_cp;
+		     
+            char buf[BUFFER_SIZE];
 		    bzero(buf,sizeof(buf));
-            cp cpList;
+            char temp_buf[BUFFER_SIZE];
+            bzero(temp_buf,sizeof(temp_buf));
+	    char fn[BUFFER_SIZE];
+	    bzero(fn,sizeof(fn));	    
+            cp cpList; // save capability list
+            // 讀取原本的 > 找同檔名 > If 找到: 儲存新的permission/not: 儲存舊的
 		    while(fgets(buf,sizeof(buf),fp_cg)!=NULL)
 		    {
-			char temp_buf[BUFFER_SIZE];
-		        char per_[BUFFER_SIZE];
-	        	char owner[BUFFER_SIZE];
-		        char gp[BUFFER_SIZE];
-		        int fs; // file size
-		  	int mon;
-			int day;
-			int year;
-			char fn[BUFFER_SIZE];
-			//cp cp_list[BUFFER_SIZE];
-              //          cp cpList;
-			printf("buffer %s",buf);
-			//fscanf(fp_cg,"%s",per_);
-		//	buf[strlen(buf)-1] = '\0';
-			printf("len:%ld\n",strlen(buf));
-		//	printf("bless:%s\n",per_);
-		//	fscanf(fp_cg,"%s %s %s %d %d %d %d %s",per_,owner,gp,&fs,&mon,&day,&year,fn);
-			// printf("check ...per:%s\n",per_);
-		//	printf("buf:%s\n",buf);
-	//
-	//strcpy(per_,buf);
-	//strcpy(per_,"A B C");
-			strcpy(temp_buf,buf);
-			int ct = 0;
-			char *delim=" ";
-			char *pch;
-			pch = strtok(temp_buf,delim);
-			ct++;
-			//printf("pch:%s\n",pch);
-			while(pch!=NULL)
-			{
-				if(ct==1) strcpy(cpList[line].per,pch);
-				if(ct==6) {
-					strcpy(fn,pch);
-					fn[strlen(fn)-1] = '\0';
-					if(strcmp(fn,file_name)==0)
-					{
-						printf("bingo!\n");
-						strcpy(cpList[line].per,per);
-					}
-				}	
-				printf("pch:%s\n",pch);
-				
-				pch = strtok(NULL,delim);
-				ct++;
-			}
-			printf(">>%s\n",cpList[line].per);
-			printf(">>>%s\n",fn);
-			line++;
-		//	printf("per_:%s\n",per_);
-			/*
-			int cnt = 0;
-			char *delim = " ";
-			char *pch;
-			pch = strtok(per_,delim);
-			cnt++;
-			while(*pch!='\n')
-			{
-				if(cnt==1)
-				{
-					printf("only per:%s\n",pch);
-				}
-				cnt++;
-				pch = strtok(NULL,delim);
-			}*/
-		//	bzero(buf,sizeof(buf));
-			/*
-			if(strcmp(file_name,fn)==0)
-			{
-				save_cp[line].per =  per;
-				save_cp[line].owner = owner;
-				save_cp[line].group = gp;
-				save_cp[line].file_size = fs;
-				save_cp[line].month = mon;
-			        save_cp[line].day = day;
-				save_cp[line].year = year;
-				save_cp[line].filename = fn;
-			}
-			else{
-                                save_cp[line].per =  per_;
-                                save_cp[line].owner = owner;
-                                save_cp[line].group = gp;
-                                save_cp[line].file_size = fs;
-                                save_cp[line].month = mon;
-                                save_cp[line].day = day;
-                                save_cp[line].year = year;
-                                save_cp[line].filename = fn;
-			}
-			printf("buffer:%s\n",buf);
-			line++;
-		    }
-		    printf("line數:%d\n",line);
-		    for(int i=0;i<line;i++)
-		    {
-		    fprintf(fp_new,"%s %s %s %d %d %d %d %s",save_cp[i].per,save_cp[i].owner,save_cp[i].group,save_cp[i].file_size,save_cp[i].month,save_cp[i].day,save_cp[i].year,save_cp[i].filename);}
+                printf("buffer %s",buf);
+                printf("len:%ld\n",strlen(buf));
+                strcpy(temp_buf,buf);
+                int ct = 0;
+                char *delim=" ";
+                char *pch;
+                pch = strtok(temp_buf,delim);
+                ct++;
 
-		    fclose(fp_cg);
-		    fclose(fp_new);
-		    remove("./data/cp.txt");
-		    rename("./data/cp_temp.txt","./data/cp.txt");
-	    }	   */
-		}
-       // FILE *fp_new=fopen("./data/cp_go.txt","w");
+                while(pch!=NULL)
+                {
+                    if(ct==1) strcpy(cpList[line].per,pch); // permission 
+                    if(ct==2) strcpy(cpList[line].owner,pch); // owner
+                    if(ct==3) strcpy(cpList[line].group,pch); // group
+                    if(ct==4) strcpy(cpList[line].file_size,pch); // filesize
+                    if(ct==5) strcpy(cpList[line].date,pch); // date
+                    
+                    if(ct==6) // filename 
+                    {
+                        strcpy(fn,pch);
+                        fn[strlen(fn)-1] = '\0'; // 不要有換行
+                        if(strcmp(fn,file_name)==0)
+                        {
+                            printf("bingo!\n");
+                            strcpy(cpList[line].per,per);
+                        }
+                    }	
+                    printf("pch:%s\n",pch);
+                    pch = strtok(NULL,delim);
+                    ct++;
+                }
+                printf(">>%s\n",cpList[line].per);
+                printf(">>>%s\n",fn);
+                line++;
 
-        for(int i=0;i<line;i++)
-        {
-            fprintf(fp_new,"%s\n",cpList[i].per);
-        }
-        fclose(fp_new);
-	fclose(fp_cg);
-	remove("./data/cp.txt");
-	 rename("./data/cp_temp.txt","./data/cp.txt");  
-        
-	}	
+            }
+            // 寫入新建的 
+            for(int i=0;i<line;i++)
+            {
+                fprintf(fp_new,"%s %s %s %s %s %s\n",cpList[i].per,cpList[i].owner,cpList[i].group,cpList[i].file_size,cpList[i].date,cpList[i].filename);
+            }
+            fclose(fp_new);
+            fclose(fp_cg);
+            remove("./data/cp.txt");
+            rename("./data/cp_temp.txt","./data/cp.txt");    
+        } // End Chmod	
     } // End if Status == 1 : 登入狀態        	
 	close(new_server_socket);
   
