@@ -345,13 +345,20 @@ int main(int argc, char **argv)
                     
                     if(ct==6) // filename 
                     {
-                        strcpy(fn,pch);
+                        strcpy(cpList[line].filename,pch);
+			strcpy(fn,pch);
                         fn[strlen(fn)-1] = '\0'; // 不要有換行
                         if(strcmp(fn,file_name)==0)
                         {
                             printf("bingo!\n");
                             strcpy(cpList[line].per,per);
                         }
+			/*
+			else
+			{
+			   strcpy(cpList[line].per,per); 
+			}
+			*/
                     }	
                     printf("pch:%s\n",pch);
                     pch = strtok(NULL,delim);
@@ -365,7 +372,7 @@ int main(int argc, char **argv)
             // 寫入新建的 
             for(int i=0;i<line;i++)
             {
-                fprintf(fp_new,"%s %s %s %s %s %s\n",cpList[i].per,cpList[i].owner,cpList[i].group,cpList[i].file_size,cpList[i].date,cpList[i].filename);
+                fprintf(fp_new,"%s %s %s %s %s %s",cpList[i].per,cpList[i].owner,cpList[i].group,cpList[i].file_size,cpList[i].date,cpList[i].filename);
             }
             fclose(fp_new);
             fclose(fp_cg);
