@@ -181,7 +181,19 @@ void dostuff(int newsockfd)
 						{
 							setuse(command[1], "read");
 							read_file(command[1], content);
+                                                        printf("content len%ld\n",strlen(content));
+							int len = strlen(content);
+
+							if(len==0)
+							{
+								strcpy(content,"No content!\n");
+							}
 							n = write(newsockfd, content, strlen(content));
+							printf("\nn:%d\n",n);
+							if(n==0)
+							{
+								printf("No content.\n");
+							}
 						}
 						else if(!checkper(command[1], usergroup, "read") && checkusage(command[1], "read"))
 						{
@@ -359,6 +371,9 @@ void newfile(char *filename, char *permission, char *account, int group)
 	
 	//新增檔案
 	outfp = fopen(temp, "w");
+
+	printf("新建/沒內容:%s\n",temp);
+	fprintf(outfp,"%s","");
 	//關閉fp
 	fclose(outfp);	
 

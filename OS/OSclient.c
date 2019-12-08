@@ -203,6 +203,7 @@ void read_file(char *filename, char *content)
 	int i = 0;
 	while((ch = getc(fp)) != EOF)
 	{
+		printf("check\n");
 		content[i] = ch;
 		i++;
 	}
