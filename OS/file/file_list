@@ -1,7 +1,5 @@
-fileinput rwrwrw JIAN AOS_group Thu Dec 20 21:25:17 2018
-test r----- JIAN AOS_group Sun Dec  8 18:48:05 2019
-upload rw---- JIAN AOS_group Sun Dec  8 18:50:11 2019
-jj rw-w-w JIAN AOS_group Sun Dec  8 18:53:34 2019
-pass rw---- JIAN AOS_group Sun Dec  8 18:57:37 2019
-abcd rw---- JIAN AOS_group Sun Dec  8 21:05:02 2019
-yt rwrwrw 
+fileinput r-r-r- JIAN AOS_group Thu Dec 20 21:25:17 2018
+A rwrwrw JIAN AOS_group Mon Dec  9 00:47:39 2019
+B rwrwrw JIAN AOS_group Mon Dec  9 01:18:29 2019
+BB rwrwrw JIAN AOS_group Mon Dec  9 01:25:18 2019
+unknow rw---- JIAN AOS_group Mon Dec  9 01:34:26 2019

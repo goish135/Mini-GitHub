@@ -1,13 +1,5 @@
-all: OSclient OSserver
-
-OSclient: OSclient.o
-	gcc -o OSclient OSclient.o
-OSserver: OSserver.o
-	gcc -o OSserver OSserver.o
-OSclient.o: OSclient.c
-	gcc -c OSclient.c
-OSserver.o: OSserver.c
-	gcc -c OSserver.c
-
+all: 
+	gcc OSserver.c -o OSserver
+	gcc OSclient.c -o OSclient
 clean:
-	rm -f OSserver.o OSclient.o
+	rm -f OSserver OSclient

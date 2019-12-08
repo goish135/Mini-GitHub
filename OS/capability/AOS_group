@@ -1,12 +1,5 @@
 fileinput rw
-test r-----./file/test
-upload rw
-jj rw
-pass rw
-abcd rw
-yt rw
-wee rw
-happy rw
-root rw
-fish rw
-toy rw
+A rw
+B rw
+BB rw
+unknow rw
