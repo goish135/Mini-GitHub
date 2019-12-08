@@ -1,0 +1,5 @@
+fileinput rr
+test --./file/test
+upload --./file/upload
+jj -w./file/jj
+pass --
