@@ -123,6 +123,13 @@ int main(int argc, char *argv[])
 					read_file(command[1], content);
 					printf("%s", content);
 					n = write(sockfd, content, strlen(content));
+
+					bzero(content,1000);
+					n = read(sockfd,content,1000);
+					printf("\nenter enter\n");
+					getchar();
+
+					n = write(sockfd,"okok",5);
 				}
 				else
 					printf("%s\n", content);
@@ -139,7 +146,7 @@ int main(int argc, char *argv[])
 				write_file(command[1], content, "o");
 			}
 			//new
-			else if(strcmp(command[0], "new") == 0)
+			else if(strcmp(command[0], "create") == 0)
 			{
 				n = write(sockfd, all_command, strlen(all_command));
 				n = read(sockfd, content, 1000);
@@ -153,7 +160,7 @@ int main(int argc, char *argv[])
 				printf("%s\n", content);
 			}
 			//changeper
-			else if(strcmp(command[0], "change") == 0)
+			else if(strcmp(command[0], "changemode") == 0)
 			{
 				n = write(sockfd, all_command, strlen(all_command));
 				n = read(sockfd, content, 1000);

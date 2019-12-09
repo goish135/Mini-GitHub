@@ -96,7 +96,7 @@ void dostuff(int newsockfd)
 		int n;
 		char buffer[256];
 		bzero(buffer, 256);
-		char command_list[][20] = {"new", "read", "write", "change", "information", "quit"};
+		char command_list[][20] = {"create", "read", "write", "changemode", "information", "quit"};
 	    char command[3][100];
 		for(int x = 0; x < 3; x++)
         {
@@ -213,8 +213,14 @@ void dostuff(int newsockfd)
 							n = write(newsockfd, "ok", 2);
 							setuse(command[1], "write");
 							n = read(newsockfd, content, 2000);
+
 							printf("%s", content);
 							write_file(command[1], content, command[2]);
+                                                        // hold 
+							bzero(content,2000);
+							write(newsockfd,"okok",5);
+							read(newsockfd,content,2000);
+
 							closeuse(command[1], "write");
 							printf("write_done");
 						}
